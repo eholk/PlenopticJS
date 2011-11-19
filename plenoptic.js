@@ -1,13 +1,13 @@
 var vertex_src =
-"      attribute vec4 aVertexPosition;" +
+"      attribute vec3 aVertexPosition;" +
 "      void main() {" +
 //"        gl_TexCoord[0] = gl_MultiTexCoord0;" +
-"        gl_Position = aVertexPosition;" +
+"        gl_Position = vec4(aVertexPosition, 1.0);" +
 "      }";
 
 var frag_src = 
 "      void main() { " +
-"        gl_FragColor = vec4(0.0, 0.0, 1.0, 1.0);" +
+"        gl_FragColor = vec4(0.0, 0.0, 1.0, 0.0);" +
 "      }";
 
 var gl = null;
@@ -22,19 +22,27 @@ function start() {
 
     vbuf = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, vbuf);
+/*
     vertices = [
         160, 120, 0.0,
-            480, 120, 0.0,
         480, 360, 0.0,
-            160, 360, 0.0
+        480, 120, 0.0,
+        160, 360, 0.0
+    ];
+*/
+    vertices = [
+        0.0, 0.0, 0.0,
+        1.0, 0.0, 0.0,
+        1.0, 1.0, 0.0,
+        0.0, 1.0, 0.0
     ];
 
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices),
                   gl.STATIC_DRAW);
 
     // DRAW!
-    gl.vertexAttribPointer(vbuf, 3, gl.FLOAT, false, 0, 0);
-    gl.drawArrays(gl.QUADS, 0, 4);
+    gl.vertexAttribPointer(vattr, 3, gl.FLOAT, false, 0, 0);
+    gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
 }
 
 function initWebGL(canvas) {
@@ -63,6 +71,10 @@ function initWebGL(canvas) {
     }
     
     gl.useProgram(prog);
+
+    // set up attributes
+    vattr = gl.getAttribLocation(prog, "aVertexPosition");
+    gl.enableVertexAttribArray(vattr);
 
     return gl;
 }
