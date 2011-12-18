@@ -11,8 +11,7 @@ var frag_src =
 "      varying highp vec2 vtex_coord;" +
 "      uniform sampler2D tex;" +
 "      void main() { " +
-"        gl_FragColor  = vec4(0.0, 0.0, 1.0, 1.0);" +
-"        gl_FragColor += texture2D(tex, vtex_coord);" +
+"        gl_FragColor = texture2D(tex, vtex_coord);" +
 "      }";
 
 var gl = null;
@@ -29,7 +28,6 @@ function start() {
 
     gl = initWebGL(canvas);
     initBuffers();
-
     loadTexture("253a-crop.png");
 }
 
@@ -63,6 +61,7 @@ function initBuffers() {
 }
 
 function draw() {
+    console.info("Drawing");
     gl.clearColor(0, 0, 0, 1.0);
     gl.clear(gl.COLOR_BUFFER_BIT);
 
@@ -91,15 +90,22 @@ function loadTexture(url) {
     img.onload = function () {
         //alert("" + img.width + " " + img.height);
         gl.bindTexture(gl.TEXTURE_2D, tx);
-        img.width=1024;
-        img.height=1024;
+        checkgl();
+        // img.width  = 1024;
+        // img.height = 1024;
+        gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
         gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE,
                       img);
-        
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
         checkgl();
         
         //gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
         //checkgl();
+
+        console.info("Texture loaded, about to draw...");
 
         draw();
     }
