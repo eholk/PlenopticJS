@@ -7,13 +7,7 @@ var vertex_src =
 "        gl_Position = vec4(aVertexPosition, 1.0);" +
 "      }";
 
-var frag_src = 
-"      varying highp vec2 vtex_coord;" +
-"      uniform sampler2D tex;" +
-"      void main() { " +
-"        gl_FragColor = texture2D(tex, vtex_coord);" +
-"      }";
-
+var num_micro_images = 35;
 var gl = null;
 
 var errors = [];
@@ -33,10 +27,10 @@ function start() {
 
 function initBuffers() {
     vertices = [
-        0.0-0.5, 0.0-0.5, 0.0,
-        1.0-0.5, 0.0-0.5, 0.0,
-        1.0-0.5, 1.0-0.5, 0.0,
-        0.0-0.5, 1.0-0.5, 0.0
+       -1.0, -1.0, 0.0,
+        1.0, -1.0, 0.0,
+        1.0,  1.0, 0.0,
+       -1.0,  1.0, 0.0
     ];
 
     tcoords = [
@@ -88,11 +82,8 @@ function loadTexture(url) {
     tx = gl.createTexture();
     img = new Image();
     img.onload = function () {
-        //alert("" + img.width + " " + img.height);
         gl.bindTexture(gl.TEXTURE_2D, tx);
         checkgl();
-        // img.width  = 1024;
-        // img.height = 1024;
         gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
         gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE,
                       img);
@@ -102,9 +93,6 @@ function loadTexture(url) {
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
         checkgl();
         
-        //gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-        //checkgl();
-
         console.info("Texture loaded, about to draw...");
 
         draw();
@@ -112,16 +100,20 @@ function loadTexture(url) {
     img.src = url;
 }
 
+function readContents(iframe) {
+    return iframe.document.getElementsByTagName("pre")[0].innerText;
+}
+
 function initWebGL(canvas) {
     try {
         gl = canvas.getContext("experimental-webgl");
     }
     catch(e) {
-        alert("Error getting context.");
+        console.error("Error getting context.");
     }
 
     if(!gl) {
-        alert("Your browser doesn't appear to support WebGL.");
+        console.error("Your browser doesn't appear to support WebGL.");
     }
 
     // initialize error strings
@@ -131,15 +123,15 @@ function initWebGL(canvas) {
 
     // initialize shaders
     vshade = makeShader(vertex_src, gl.VERTEX_SHADER);
-    fshade = makeShader(frag_src, gl.FRAGMENT_SHADER);
-
+    fshade = makeShader(readContents(frag_src), gl.FRAGMENT_SHADER);
     prog = gl.createProgram();
+
     gl.attachShader(prog, vshade);
     gl.attachShader(prog, fshade);
     gl.linkProgram(prog);
 
     if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) {
-        alert("Unable to initialize the shader program.");
+        console.error("Unable to initialize the shader program.");
     }
     
     gl.useProgram(prog);
@@ -164,8 +156,8 @@ function makeShader(src, type) {
     gl.compileShader(shader);
 
     if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-        alert("An error occurred compiling the shaders: "
-              + gl.getShaderInfoLog(shader));
+        console.error("An error occurred compiling the shaders: "
+                      + gl.getShaderInfoLog(shader));
         return null;
     }
   
