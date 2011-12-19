@@ -20,8 +20,6 @@ function start() {
     var canvas = document.getElementById("glcanvas");
 
     gl = initWebGL(canvas);
-    initBuffers();
-    loadTexture("253a-crop.jpg");
 }
 
 function initBuffers() {
@@ -63,11 +61,9 @@ function draw() {
     console.info("Drawing");
 
     // set the shader parameters
-    setParam("num_micro_images_x");
-    setParam("num_micro_images_y");
-    setParam("pitch");
-    setParam("view_x");
-    setParam("view_y");
+    $('input.param').each(function (i, p) {
+        setParam(p.id);
+    });
 
     // Actually draw
     gl.clearColor(0, 0, 0, 1.0);
@@ -137,27 +133,32 @@ function initWebGL(canvas) {
 
     // initialize shaders
     vshade = makeShader(vertex_src, gl.VERTEX_SHADER);
-    fshade = makeShader(readContents(frag_src), gl.FRAGMENT_SHADER);
-    prog = gl.createProgram();
+    $.get("plenoptic.txt", function(frag_src) {
+        fshade = makeShader(frag_src, gl.FRAGMENT_SHADER);
+        prog = gl.createProgram();
+          
+        gl.attachShader(prog, vshade);
+        gl.attachShader(prog, fshade);
+        gl.linkProgram(prog);
+        
+        if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) {
+            console.error("Unable to initialize the shader program.");
+        }
+        
+        gl.useProgram(prog);
 
-    gl.attachShader(prog, vshade);
-    gl.attachShader(prog, fshade);
-    gl.linkProgram(prog);
+        // set up attributes
+        vattr = gl.getAttribLocation(prog, "aVertexPosition");
+        gl.enableVertexAttribArray(vattr);
+        checkgl();
+        
+        tattr = gl.getAttribLocation(prog, "tex_coord");
+        gl.enableVertexAttribArray(tattr);
+        checkgl();
 
-    if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) {
-        console.error("Unable to initialize the shader program.");
-    }
-    
-    gl.useProgram(prog);
-
-    // set up attributes
-    vattr = gl.getAttribLocation(prog, "aVertexPosition");
-    gl.enableVertexAttribArray(vattr);
-    checkgl();
-    
-    tattr = gl.getAttribLocation(prog, "tex_coord");
-    gl.enableVertexAttribArray(tattr);
-    checkgl();
+        initBuffers();
+        loadTexture("253a-crop.jpg");
+    });
 
     return gl;
 }
