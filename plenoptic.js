@@ -7,7 +7,6 @@ var vertex_src =
 "        gl_Position = vec4(aVertexPosition, 1.0);" +
 "      }";
 
-var num_micro_images = 35;
 var gl = null;
 
 var errors = [];
@@ -54,8 +53,23 @@ function initBuffers() {
     checkgl();
 }
 
+function setParam(name) {
+    var attrib = gl.getUniformLocation(prog, name);
+    var el = document.getElementById(name);
+    gl.uniform1f(attrib, el.value);
+}
+
 function draw() {
     console.info("Drawing");
+
+    // set the shader parameters
+    setParam("num_micro_images_x");
+    setParam("num_micro_images_y");
+    setParam("pitch");
+    setParam("view_x");
+    setParam("view_y");
+
+    // Actually draw
     gl.clearColor(0, 0, 0, 1.0);
     gl.clear(gl.COLOR_BUFFER_BIT);
 

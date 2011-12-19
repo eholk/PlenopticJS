@@ -2,9 +2,26 @@
 
 <html>
   <head>
+    <link rel="stylesheet" href="style.css" type="text/css">
   </head>
   
   <body onload="start()">
+    <div id="controls">
+      <label for="pitch">Pitch</label>
+      <input type="number" value="0.1906" id="pitch" onchange="draw();">
+      <br>
+      <label for="num_micro_images_x">Number of microimages (X)</label>
+      <input type="number" value="35.15" id="num_micro_images_x" onchange="draw();">
+      <br>
+      <label for="num_micro_images_y">Number of microimages (Y)</label>
+      <input type="number" value="39.18" id="num_micro_images_y" onchange="draw();">
+      <br>
+      <label for="view_x">X Viewpoint</label>
+      <input type="number" value="0.5" id="view_x" onchange="draw();">
+      <br>
+      <label for="view_y">Y Viewpoint</label>
+      <input type="number" value="0.5" id="view_y" onchange="draw();">
+    </div>
     <canvas id="glcanvas" width="500" height="500">
       
     </canvas>
