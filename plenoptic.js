@@ -54,12 +54,13 @@ function initBuffers() {
 function setParam(name) {
     var attrib = gl.getUniformLocation(prog, name);
     var el = document.getElementById(name);
-    gl.uniform1f(attrib, el.value);
+    var v = el.value;
+    if($(el).hasClass("flipped"))
+        v = el.max - v;
+    gl.uniform1f(attrib, v);
 }
 
 function draw() {
-    console.info("Drawing");
-
     // set the shader parameters
     $('input.param').each(function (i, p) {
         setParam(p.id);
@@ -157,6 +158,8 @@ function initWebGL(canvas) {
         checkgl();
 
         initBuffers();
+
+        console.info("Loaded fragment shader and initialized buffers.");
         loadTexture("253a-crop.jpg");
     });
 
