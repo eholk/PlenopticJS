@@ -8,15 +8,31 @@ uniform sampler2D tex;
 uniform float num_micro_images_x, num_micro_images_y;
 uniform float pitch;
 uniform float view_x, view_y;
+uniform float aperture;
 
 void main() {
+    const float radius = 1.0;
+    vec2 view_shift = vec2(view_x, view_y);
     vec2 num_micro_images = vec2(num_micro_images_x, num_micro_images_y);
     vec2 micro_image = vtex_coord * num_micro_images;
-    vec2 offset = micro_image - floor(micro_image);
-    micro_image = floor(micro_image);
+    vec2 offset = micro_image - floor(micro_image) - view_shift;
+    micro_image = floor(micro_image) + view_shift;
 
-    vec2 view_shift = vec2(view_x, view_y);
-    
-    vec2 lf_pos = (micro_image + view_shift - pitch * offset) / num_micro_images;
-    gl_FragColor = texture2D(tex, lf_pos);
+    float total_weight = 0.0;
+
+    gl_FragColor = vec4(0.0, 0.0, 0.0, 0.0);
+
+    for(float i = -radius; i <= radius; i += 1.0) {
+        for(float j = -radius; j <= radius; j += 1.0) {
+            vec2 shift = vec2(i, j);
+            vec2 lf_pos = micro_image - pitch * (offset - shift) + shift;
+
+            float weight = exp2(-aperture * dot(shift, shift));
+
+            gl_FragColor += weight * texture2D(tex, lf_pos / num_micro_images);
+            total_weight += weight;
+        }
+    }
+
+    gl_FragColor /= total_weight;
 }
