@@ -21,7 +21,7 @@ function start() {
 
     gl = initWebGL(canvas);
     initBuffers();
-    loadTexture("253a-crop.png");
+    loadTexture("253a-crop.jpg");
 }
 
 function initBuffers() {
