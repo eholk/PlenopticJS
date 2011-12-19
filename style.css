@@ -6,3 +6,7 @@ div#main {
     margin-right: auto;
     margin-left: auto;
 }
+
+div#advanced_controls {
+    display: none;
+}

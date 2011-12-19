@@ -17,6 +17,10 @@ function checkgl() {
 }
 
 function start() {
+    $('#advanced_link').click(function(e) {
+        $('#advanced_controls').toggle('fast');
+    });
+
     var canvas = document.getElementById("glcanvas");
 
     gl = initWebGL(canvas);
