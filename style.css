@@ -23,6 +23,7 @@ footer iframe {
     position: relative;
     top: 7px;
     left: 12px;
+    border: none;
 }
 
 div#controls {
