@@ -8,11 +8,18 @@
   
   <body onload="start()">
     <div id="main">
+      <div id="viewer">
+        <canvas id="glcanvas" width="550" height="550">
+        </canvas>
+      </div>
+
       <div id="controls">
         <label for="pitch">Focus</label>
         <br>
-        Near <input class="param flipped" type="range" min="0.01" max="0.3" step="0.001" value="0.1094" id="pitch" onchange="draw();"> Far
-        <br>
+        Near
+        <input class="param flipped" type="range" min="0.01" max="0.3" step="0.001" value="0.1094" id="pitch" onchange="draw();"> 
+        Far
+        <br><br>
         <a id="advanced_link" href="#">Advanced Controls</a>
         <div id="advanced_controls">
           <br>
@@ -33,10 +40,12 @@
         </div>
       </div>
     </div>
-    
-    <canvas id="glcanvas" width="500" height="500">
-    </canvas>
-
+    <footer>
+      Created by <a href="http://www.cs.indiana.edu/~eholk/">Eric Holk</a>.
+      
+      <iframe src="http://markdotto.github.com/github-buttons/github-btn.html?user=eholk&repo=PlenopticJS&type=watch&count=true&size=large"
+  allowtransparency="true" frameborder="0" scrolling="0" width="170px" height="30px"></iframe>
+    </footer>
     <script src="plenoptic.js" type="text/javascript"></script>
   </body>
 </html>
