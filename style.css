@@ -39,6 +39,8 @@ div#controls {
     border-radius: 6px;
 
     box-shadow: inset 0 0 6px #444;
+    
+    overflow: scroll;
 }
 
 div#main {
