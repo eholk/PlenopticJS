@@ -22,10 +22,16 @@
         Far
         <br><br>
         <label for="view_x">Horizontal Viewpoint</label>
-        <input class="param" type="range" value="0.5" min="0.47" max="0.65" step="0.001" id="view_x" onchange="draw();">
+        <input class="param" type="range" value="0.546" min="0.47" max="0.65" step="0.001" id="view_x" onchange="draw();">
         <br>
         <label for="view_y">Vertical Viewpoint</label>
         <input class="param" type="range" value="0.6" min="0.52" max="0.77" step="0.001" id="view_y" onchange="draw();">
+        <br><br>
+        <label for="aperture">Depth of Field</label>
+        <br>
+        Shallow
+        <input class="param" type="range" value="0.25" min="0.168" max="4.0" step="0.001" id="aperture" onchange="draw();">
+        Deep
         <br><br>
         <a id="advanced_link" href="#">Advanced Controls</a>
         <div id="advanced_controls">
@@ -35,9 +41,6 @@
           <br>
           <label for="num_micro_images_y">Number of microimages (Y)</label>
           <input class="param" type="number" value="39.18" id="num_micro_images_y" onchange="draw();">
-          <br>
-          <label for="aperture">Aperture</label>
-          <input class="param" type="number" value="0.25" id="aperture" onchange="draw();">
         </div>
 
         <h3>What is this?</h3>

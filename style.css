@@ -76,3 +76,7 @@ div#advanced_controls {
 input#pitch {
     width: 80px;
 }
+
+input#aperture {
+    width: 65px;
+}
