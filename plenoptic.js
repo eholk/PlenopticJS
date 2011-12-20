@@ -17,6 +17,10 @@ function checkgl() {
 }
 
 function start() {
+    // This is needed to work around the fact that Firefox doesn't
+    // support range inputs.
+    $('#pitch')[0].max = 0.3;
+
     $('#advanced_link').click(function(e) {
         $('#advanced_controls').toggle('fast');
     });
@@ -58,10 +62,11 @@ function initBuffers() {
 function setParam(name) {
     var attrib = gl.getUniformLocation(prog, name);
     var el = document.getElementById(name);
-    var v = el.value;
+    var v = parseFloat(el.value);
     if($(el).hasClass("flipped"))
-        v = el.max - v;
+        v = parseFloat(el.max) - v;
     gl.uniform1f(attrib, v);
+    checkgl();
 }
 
 function draw() {
@@ -138,33 +143,36 @@ function initWebGL(canvas) {
 
     // initialize shaders
     vshade = makeShader(vertex_src, gl.VERTEX_SHADER);
-    $.get("plenoptic.txt", function(frag_src) {
-        fshade = makeShader(frag_src, gl.FRAGMENT_SHADER);
-        prog = gl.createProgram();
-          
-        gl.attachShader(prog, vshade);
-        gl.attachShader(prog, fshade);
-        gl.linkProgram(prog);
-        
-        if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) {
-            console.error("Unable to initialize the shader program.");
+    $.ajax({
+        url: "plenoptic.txt",
+        success: function(frag_src) {
+            fshade = makeShader(frag_src, gl.FRAGMENT_SHADER);
+            prog = gl.createProgram();
+            
+            gl.attachShader(prog, vshade);
+            gl.attachShader(prog, fshade);
+            gl.linkProgram(prog);
+            
+            if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) {
+                console.error("Unable to initialize the shader program.");
+            }
+            
+            gl.useProgram(prog);
+            
+            // set up attributes
+            vattr = gl.getAttribLocation(prog, "aVertexPosition");
+            gl.enableVertexAttribArray(vattr);
+            checkgl();
+            
+            tattr = gl.getAttribLocation(prog, "tex_coord");
+            gl.enableVertexAttribArray(tattr);
+            checkgl();
+            
+            initBuffers();
+            
+            console.info("Loaded fragment shader and initialized buffers.");
+            loadTexture("253a-crop.jpg");
         }
-        
-        gl.useProgram(prog);
-
-        // set up attributes
-        vattr = gl.getAttribLocation(prog, "aVertexPosition");
-        gl.enableVertexAttribArray(vattr);
-        checkgl();
-        
-        tattr = gl.getAttribLocation(prog, "tex_coord");
-        gl.enableVertexAttribArray(tattr);
-        checkgl();
-
-        initBuffers();
-
-        console.info("Loaded fragment shader and initialized buffers.");
-        loadTexture("253a-crop.jpg");
     });
 
     return gl;
@@ -172,16 +180,19 @@ function initWebGL(canvas) {
 
 function makeShader(src, type) {
     var shader = gl.createShader(type);
-
+    checkgl();
+    
     gl.shaderSource(shader, src);
-
+    checkgl();
+    
     gl.compileShader(shader);
-
+    checkgl();
+    
     if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
         console.error("An error occurred compiling the shaders: "
                       + gl.getShaderInfoLog(shader));
         return null;
     }
-  
-  return shader;    
+    
+    return shader;
 }

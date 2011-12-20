@@ -5,10 +5,10 @@ precision highp float;
 varying vec2 vtex_coord;
 
 uniform sampler2D tex;
-uniform float num_micro_images_x, num_micro_images_y;
-uniform float pitch;
-uniform float view_x, view_y;
-uniform float aperture;
+uniform highp float num_micro_images_x, num_micro_images_y;
+uniform highp float pitch;
+uniform highp float view_x, view_y;
+uniform highp float aperture;
 
 /**
    This function basically does the 4D lightfield lookup.
@@ -21,6 +21,7 @@ vec4 micro_image_sample(vec2 micro_image, vec2 offset) {
 }
 
 void main() {
+    //const float view_x = 0.5, view_y = 0.6, pitch = 0.1094;
     const float radius = 1.0;
     vec2 view_shift = vec2(view_x, view_y);
     vec2 num_micro_images = vec2(num_micro_images_x, num_micro_images_y);
