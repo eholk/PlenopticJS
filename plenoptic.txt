@@ -22,7 +22,7 @@ vec4 micro_image_sample(vec2 micro_image, vec2 offset) {
 
 void main() {
     //const float view_x = 0.5, view_y = 0.6, pitch = 0.1094;
-    const float radius = 1.0;
+    const float radius = 15.0;
     vec2 view_shift = vec2(view_x, view_y);
     vec2 num_micro_images = vec2(num_micro_images_x, num_micro_images_y);
     vec2 micro_image = vtex_coord * num_micro_images;
@@ -41,9 +41,25 @@ void main() {
             vec2 lf_off = - pitch * (offset - shift);
             float weight = exp2(-aperture * dot(shift, shift));
 
-            gl_FragColor += weight * micro_image_sample(micro_image + shift,
-                                                        lf_off);
-            total_weight += weight;
+            vec2 mi = micro_image + shift;
+
+            /*
+            if(mi.x < 0.0 || mi.y < 0.0 || 
+               mi.x > num_micro_images_x || mi.y > num_micro_images_y)
+                continue;
+
+            if(lf_off.x < 0.10 || lf_off.y < 0.10 ||
+               lf_off.x > 0.90 || lf_off.y > 0.90)
+                continue;
+            */
+
+            vec4 sample = weight * micro_image_sample(micro_image + shift,
+                                                       lf_off);
+            
+            if(length(sample.rgb) > 0.1) {
+                gl_FragColor += sample;
+                total_weight += weight;
+            }
         }
     }
 
